@@ -25,19 +25,35 @@ public class ClientAma {
                         
                         // Quitter si nécessaire
                         if (serverMessage.contains("Au revoir")) {
-                            System.exit(0);
+                            try {
+                                socket.close();
+                            } catch (IOException e) {
+                                // Ignorer
+                            }
+                            return;
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("Erreur de lecture: " + e.getMessage());
+                    // Connexion fermée normalement
                 }
             });
+            readThread.setDaemon(true);
             readThread.start();
             
             // Thread pour envoyer les entrées utilisateur
             String userInput;
             while ((userInput = console.readLine()) != null) {
+                if (socket.isClosed()) {
+                    break;
+                }
                 out.println(userInput);
+            }
+            
+            // Fermer proprement
+            try {
+                socket.close();
+            } catch (IOException e) {
+                // Ignorer
             }
             
         } catch (IOException e) {

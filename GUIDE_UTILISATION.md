@@ -59,7 +59,19 @@ Lancer `run-client-ama.bat` :
 2. Entrer les données d'entrée
 3. Recevoir le résultat
 4. Répéter pour utiliser d'autres services
-5. Choisir **0** pour quitter
+5. Choisir **0** pour quitter le client
+
+### 5. Quitter le client amateur
+
+Dans le menu des services, choisir l'option **0** (Quitter). Le client se fermera proprement.
+
+### 6. Arrêter le serveur
+
+Pour arrêter le serveur BRiLaunch :
+- **Méthode 1** : Dans le terminal du serveur, appuyer sur **Ctrl+C**
+- **Méthode 2** : Dans le terminal du serveur, taper **`quit`** ou **`exit`** puis Entrée
+
+Le serveur fermera toutes les connexions et s'arrêtera proprement.
 
 ## Créer un nouveau service
 
@@ -125,6 +137,33 @@ Pour créer un service personnalisé :
 3. **Pas de gestion .jar** : Seules les classes individuelles sont supportées
 4. **Pas de ressources partagées** : Chaque service est indépendant
 5. **Pas d'authentification amateur** : Tous les amateurs sont anonymes
+
+## Comment quitter
+
+### Quitter le client amateur
+
+1. Dans le menu des services, choisir l'option **0** (Quitter)
+2. Le client se fermera automatiquement
+
+### Quitter le client programmeur
+
+1. Dans le menu principal, choisir l'option **4** (Quitter)
+2. Le client se fermera automatiquement
+
+### Arrêter le serveur
+
+Le serveur peut être arrêté de deux façons :
+
+**Méthode 1 - Ctrl+C :**
+- Dans le terminal où le serveur tourne, appuyer sur **Ctrl+C**
+- Le serveur fermera toutes les connexions et s'arrêtera
+
+**Méthode 2 - Commande quit :**
+- Dans le terminal où le serveur tourne, taper **`quit`** ou **`exit`**
+- Appuyer sur Entrée
+- Le serveur s'arrêtera proprement
+
+**Note :** Si des clients sont connectés, ils seront déconnectés lorsque le serveur s'arrête.
 
 ## Dépannage
 

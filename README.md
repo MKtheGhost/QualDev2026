@@ -44,6 +44,7 @@ java -cp bin brilaunch.ClientProg
    - Entrer le nom complet de la classe (ex: `exemple.InversionService`)
 2. Mettre à jour un service
 3. Changer l'adresse FTP
+4. Quitter (choisir option 4)
 
 ### 3. Lancer un client amateur (dans un autre terminal)
 
@@ -51,7 +52,13 @@ java -cp bin brilaunch.ClientProg
 java -cp bin brilaunch.ClientAma
 ```
 
-Choisir un service dans la liste et entrer les données d'entrée.
+Choisir un service dans la liste et entrer les données d'entrée. Pour quitter, choisir l'option **0** dans le menu.
+
+### 4. Arrêter le serveur
+
+Pour arrêter le serveur proprement :
+- Appuyer sur **Ctrl+C** dans le terminal du serveur
+- Ou taper **`quit`** ou **`exit`** dans le terminal du serveur
 
 ## Services d'exemple
 

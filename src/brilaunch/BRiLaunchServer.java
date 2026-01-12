@@ -18,6 +18,11 @@ public class BRiLaunchServer {
     // Stockage des services (serviceName -> ServiceInfo)
     private Map<String, ServiceInfo> services = new ConcurrentHashMap<>();
     
+    // Serveurs sockets pour pouvoir les fermer
+    private ServerSocket programmerServerSocket;
+    private ServerSocket amateurServerSocket;
+    private volatile boolean running = true;
+    
     public static void main(String[] args) {
         BRiLaunchServer server = new BRiLaunchServer();
         server.start();
@@ -27,6 +32,16 @@ public class BRiLaunchServer {
         System.out.println("=== Serveur BRiLaunch démarré ===");
         System.out.println("Port programmeurs: " + PORT_PROG);
         System.out.println("Port amateurs: " + PORT_AMA);
+        System.out.println("\nPour arrêter le serveur, appuyez sur Ctrl+C ou tapez 'quit'");
+        
+        // Ajouter un shutdown hook pour arrêter proprement
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\nArrêt du serveur en cours...");
+            stop();
+        }));
+        
+        // Thread pour écouter les commandes console
+        new Thread(() -> listenForQuitCommand()).start();
         
         // Démarrer le serveur pour les programmeurs
         new Thread(() -> startProgrammerServer()).start();
@@ -35,27 +50,80 @@ public class BRiLaunchServer {
         new Thread(() -> startAmateurServer()).start();
     }
     
-    private void startProgrammerServer() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT_PROG)) {
-            System.out.println("Serveur programmeurs en écoute sur le port " + PORT_PROG);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handleProgrammer(clientSocket)).start();
+    private void listenForQuitCommand() {
+        try (BufferedReader console = new BufferedReader(new InputStreamReader(System.in))) {
+            String line;
+            while (running && (line = console.readLine()) != null) {
+                if ("quit".equalsIgnoreCase(line.trim()) || "exit".equalsIgnoreCase(line.trim())) {
+                    System.out.println("Arrêt du serveur demandé...");
+                    stop();
+                    System.exit(0);
+                }
             }
         } catch (IOException e) {
-            System.err.println("Erreur serveur programmeurs: " + e.getMessage());
+            // Ignorer si la console n'est pas disponible
+        }
+    }
+    
+    public void stop() {
+        running = false;
+        try {
+            if (programmerServerSocket != null && !programmerServerSocket.isClosed()) {
+                programmerServerSocket.close();
+                System.out.println("Serveur programmeurs arrêté");
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'arrêt du serveur programmeurs: " + e.getMessage());
+        }
+        try {
+            if (amateurServerSocket != null && !amateurServerSocket.isClosed()) {
+                amateurServerSocket.close();
+                System.out.println("Serveur amateurs arrêté");
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'arrêt du serveur amateurs: " + e.getMessage());
+        }
+    }
+    
+    private void startProgrammerServer() {
+        try {
+            programmerServerSocket = new ServerSocket(PORT_PROG);
+            System.out.println("Serveur programmeurs en écoute sur le port " + PORT_PROG);
+            while (running) {
+                try {
+                    Socket clientSocket = programmerServerSocket.accept();
+                    new Thread(() -> handleProgrammer(clientSocket)).start();
+                } catch (IOException e) {
+                    if (running) {
+                        System.err.println("Erreur accept connexion programmeur: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            if (running) {
+                System.err.println("Erreur serveur programmeurs: " + e.getMessage());
+            }
         }
     }
     
     private void startAmateurServer() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT_AMA)) {
+        try {
+            amateurServerSocket = new ServerSocket(PORT_AMA);
             System.out.println("Serveur amateurs en écoute sur le port " + PORT_AMA);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handleAmateur(clientSocket)).start();
+            while (running) {
+                try {
+                    Socket clientSocket = amateurServerSocket.accept();
+                    new Thread(() -> handleAmateur(clientSocket)).start();
+                } catch (IOException e) {
+                    if (running) {
+                        System.err.println("Erreur accept connexion amateur: " + e.getMessage());
+                    }
+                }
             }
         } catch (IOException e) {
-            System.err.println("Erreur serveur amateurs: " + e.getMessage());
+            if (running) {
+                System.err.println("Erreur serveur amateurs: " + e.getMessage());
+            }
         }
     }
     
