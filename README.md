@@ -4,6 +4,12 @@
 
 Ce projet implémente une plateforme de services dynamiques inspirée d'OSGi, permettant à des programmeurs de fournir des services et à des amateurs de les utiliser.
 
+## Compatibilité
+
+Ce projet fonctionne sur **Windows**, **Linux** et **macOS**. Des scripts sont fournis pour chaque système d'exploitation :
+- **Windows** : fichiers `.bat`
+- **Linux / macOS** : fichiers `.sh`
+
 ## Architecture
 
 - **BRiLaunchServer** : Serveur principal qui gère les connexions
@@ -17,6 +23,24 @@ Ce projet implémente une plateforme de services dynamiques inspirée d'OSGi, pe
 
 ## Compilation
 
+### Windows
+```bash
+compile.bat
+```
+
+### Linux / Mac
+```bash
+# Première fois seulement : rendre les scripts exécutables
+chmod +x *.sh
+# ou utiliser le script helper
+chmod +x make-executable.sh
+./make-executable.sh
+
+# Compiler
+./compile.sh
+```
+
+### Manuellement
 ```bash
 javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 ```
@@ -25,12 +49,36 @@ javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 
 ### 1. Démarrer le serveur
 
+**Windows:**
+```bash
+run-server.bat
+```
+
+**Linux / Mac:**
+```bash
+chmod +x run-server.sh
+./run-server.sh
+```
+
+**Manuellement:**
 ```bash
 java -cp bin brilaunch.ServerLauncher
 ```
 
 ### 2. Lancer un client programmeur (dans un autre terminal)
 
+**Windows:**
+```bash
+run-client-prog.bat
+```
+
+**Linux / Mac:**
+```bash
+chmod +x run-client-prog.sh
+./run-client-prog.sh
+```
+
+**Manuellement:**
 ```bash
 java -cp bin brilaunch.ClientProg
 ```
@@ -48,6 +96,18 @@ java -cp bin brilaunch.ClientProg
 
 ### 3. Lancer un client amateur (dans un autre terminal)
 
+**Windows:**
+```bash
+run-client-ama.bat
+```
+
+**Linux / Mac:**
+```bash
+chmod +x run-client-ama.sh
+./run-client-ama.sh
+```
+
+**Manuellement:**
 ```bash
 java -cp bin brilaunch.ClientAma
 ```

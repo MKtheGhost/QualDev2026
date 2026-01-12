@@ -14,11 +14,24 @@ Cette implémentation simplifiée de la plateforme BRi permet :
 
 ### Compilation
 
+**Windows:**
 ```bash
-# Windows
 compile.bat
+```
 
-# Ou manuellement
+**Linux / Mac:**
+```bash
+# Première fois seulement : rendre les scripts exécutables
+chmod +x *.sh
+# ou utiliser le script helper
+./make-executable.sh
+
+# Compiler
+./compile.sh
+```
+
+**Manuellement (tous systèmes):**
+```bash
 javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 ```
 
@@ -26,8 +39,19 @@ javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 
 ### 1. Démarrer le serveur
 
+**Windows:**
 ```bash
 run-server.bat
+```
+
+**Linux / Mac:**
+```bash
+./run-server.sh
+```
+
+**Manuellement:**
+```bash
+java -cp bin brilaunch.ServerLauncher
 ```
 
 Le serveur démarre sur :
@@ -36,7 +60,11 @@ Le serveur démarre sur :
 
 ### 2. Créer un compte programmeur
 
-Lancer `run-client-prog.bat` et :
+**Windows:** Lancer `run-client-prog.bat`  
+**Linux / Mac:** Lancer `./run-client-prog.sh`  
+**Manuellement:** `java -cp bin brilaunch.ClientProg`
+
+Puis :
 1. Choisir option **2** (Créer un nouveau compte)
 2. Entrer un login (ex: `exemple`)
 3. Entrer un password
@@ -54,7 +82,11 @@ Dans le client programmeur :
 
 ### 4. Utiliser un service (amateur)
 
-Lancer `run-client-ama.bat` :
+**Windows:** Lancer `run-client-ama.bat`  
+**Linux / Mac:** Lancer `./run-client-ama.sh`  
+**Manuellement:** `java -cp bin brilaunch.ClientAma`
+
+Puis :
 1. Choisir un service dans la liste (numéro)
 2. Entrer les données d'entrée
 3. Recevoir le résultat
