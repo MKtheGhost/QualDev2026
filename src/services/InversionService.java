@@ -1,4 +1,4 @@
-package exemple;
+package services;
 
 import brilaunch.BRiService;
 

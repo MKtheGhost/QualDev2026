@@ -19,7 +19,7 @@ Cette implémentation simplifiée de la plateforme BRi permet :
 compile.bat
 
 # Ou manuellement
-javac -d bin -sourcepath src src/brilaunch/*.java src/exemple/*.java
+javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 ```
 
 ## Utilisation
@@ -47,7 +47,7 @@ Lancer `run-client-prog.bat` et :
 Dans le client programmeur :
 1. Choisir option **1** (Fournir un nouveau service)
 2. Entrer le nom complet de la classe avec package
-   - Exemple : `exemple.InversionService`
+   - Exemple : `services.InversionService`
    - Le package doit correspondre au login du programmeur
 
 **Important** : Les classes de service doivent être compilées et dans le classpath du serveur.
@@ -103,13 +103,13 @@ Pour créer un service personnalisé :
 ## Services d'exemple fournis
 
 ### InversionService
-- **Package** : `exemple`
+- **Package** : `services`
 - **Nom** : "Inversion de texte"
 - **Fonction** : Inverse une chaîne de caractères
 - **Exemple** : "non ? si !" → "! is ? non"
 
 ### ComptageMotsService
-- **Package** : `exemple`
+- **Package** : `services`
 - **Nom** : "Comptage de mots"
 - **Fonction** : Compte le nombre de mots dans un texte
 

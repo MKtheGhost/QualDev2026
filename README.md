@@ -18,7 +18,7 @@ Ce projet implémente une plateforme de services dynamiques inspirée d'OSGi, pe
 ## Compilation
 
 ```bash
-javac -d bin -sourcepath src src/brilaunch/*.java src/exemple/*.java
+javac -d bin -sourcepath src src/brilaunch/*.java src/services/*.java
 ```
 
 ## Exécution
@@ -41,7 +41,7 @@ java -cp bin brilaunch.ClientProg
 
 **Actions disponibles :**
 1. Fournir un nouveau service
-   - Entrer le nom complet de la classe (ex: `exemple.InversionService`)
+   - Entrer le nom complet de la classe (ex: `services.InversionService`)
 2. Mettre à jour un service
 3. Changer l'adresse FTP
 4. Quitter (choisir option 4)
@@ -62,7 +62,7 @@ Pour arrêter le serveur proprement :
 
 ## Services d'exemple
 
-Deux services d'exemple sont fournis dans le package `exemple` :
+Deux services d'exemple sont fournis dans le package `services` :
 
 1. **InversionService** : Inverse un texte
    - Entrée : "non ? si !"
@@ -73,7 +73,7 @@ Deux services d'exemple sont fournis dans le package `exemple` :
 ## Structure des packages
 
 - `brilaunch` : Code du serveur et des clients
-- `exemple` : Services d'exemple (doivent être dans un package correspondant au login du programmeur)
+- `services` : Services d'exemple (doivent être dans un package correspondant au login du programmeur)
 
 ## Notes importantes
 
@@ -96,7 +96,7 @@ Deux services d'exemple sont fournis dans le package `exemple` :
 
 3. **Installer un service** : Dans le client programmeur
    - Choisir option 1 (Fournir un nouveau service)
-   - Entrer: `exemple.InversionService`
+   - Entrer: `services.InversionService`
 
 4. **Utiliser le service** : Lancer `run-client-ama.bat`
    - Choisir le service "Inversion de texte"
@@ -115,7 +115,7 @@ src/
 │   ├── Programmer.java          # Classe représentant un programmeur
 │   ├── ServiceInfo.java         # Informations sur un service installé
 │   └── ServerLauncher.java      # Lanceur avec comptes de test
-└── exemple/
+└── services/
     ├── InversionService.java    # Service d'exemple : inversion de texte
     └── ComptageMotsService.java # Service d'exemple : comptage de mots
 ```
