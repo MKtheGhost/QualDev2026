@@ -15,11 +15,14 @@ Ce projet fonctionne sur **Windows**, **Linux** et **macOS**. Des scripts sont f
 - **BRiLaunchServer** : Serveur principal qui gère les connexions
   - Port 8888 : Pour les programmeurs
   - Port 8889 : Pour les amateurs
+  - Télécharge les classes de services depuis le serveur FTP du programmeur
+  - Fallback automatique sur classpath local si le téléchargement échoue
 
 - **ClientProg** : Client pour les programmeurs
 - **ClientAma** : Client pour les amateurs
 
 - **BRiService** : Interface que tous les services doivent implémenter
+- **ServiceLoader** : Utilitaire pour télécharger et charger dynamiquement les classes de services
 
 ## Compilation
 
@@ -91,9 +94,17 @@ java -cp bin brilaunch.ClientProg
 **Actions disponibles :**
 1. Fournir un nouveau service
    - Entrer le nom complet de la classe (ex: `services.InversionService`)
+   - Le serveur télécharge automatiquement la classe depuis votre serveur FTP
+   - Si le téléchargement échoue, utilisation automatique du classpath local
 2. Mettre à jour un service
 3. Changer l'adresse FTP
 4. Quitter (choisir option 4)
+
+**Téléchargement FTP :**
+- Le serveur construit l'URL comme suit : `{votre_ftp_url}/{package}/{classe}.class`
+- Exemple : Pour `services.InversionService` avec FTP `http://exemple.com`, l'URL sera `http://exemple.com/services/InversionService.class`
+- Protocoles supportés : HTTP, HTTPS, file://
+- Fallback automatique : Si le téléchargement échoue, le serveur utilise le classpath local
 
 ### 3. Lancer un client amateur (dans un autre terminal)
 
@@ -148,7 +159,9 @@ Quatre services d'exemple sont fournis dans le package `services` :
 
 - Les services doivent être dans un package correspondant au login du programmeur
 - Les services doivent implémenter l'interface `BRiService`
-- Pour simplifier, les services sont chargés depuis le classpath local (pas de téléchargement FTP dans cette version simplifiée)
+- Le serveur télécharge automatiquement les classes depuis le serveur FTP du programmeur
+- Protocoles supportés pour le téléchargement : HTTP, HTTPS, file://
+- Si le téléchargement échoue, le serveur utilise automatiquement le classpath local (fallback)
 - Le serveur doit être démarré avant les clients
 
 ## Exemple d'utilisation
@@ -195,6 +208,7 @@ src/
 │   ├── ClientAma.java           # Client amateur
 │   ├── Programmer.java          # Classe représentant un programmeur
 │   ├── ServiceInfo.java         # Informations sur un service installé
+│   ├── ServiceLoader.java       # Utilitaire pour télécharger les classes depuis FTP
 │   └── ServerLauncher.java      # Lanceur avec comptes de test
 └── services/
     ├── InversionService.java           # Service d'exemple : inversion de texte
@@ -202,9 +216,18 @@ src/
     └── MessagerieInterneService.java   # Service avec ressource partagée : messagerie
 ```
 
+## Fonctionnalités implémentées
+
+- ✅ Téléchargement des classes de services depuis le serveur FTP du programmeur
+- ✅ Support des protocoles HTTP, HTTPS et file://
+- ✅ Fallback automatique sur classpath local si le téléchargement échoue
+- ✅ Validation des noms de services (non null, non vide)
+- ✅ Gestion du changement de nom lors de la mise à jour d'un service
+- ✅ Nettoyage automatique des fichiers temporaires au shutdown
+
 ## Améliorations possibles
 
-- Implémentation réelle du téléchargement depuis FTP (actuellement simulé)
+- Support FTP réel complet (nécessiterait Apache Commons Net)
 - Implémentation réelle de l'envoi d'email avec JavaMail API (actuellement simulé)
 - Gestion des services .jar
 - Persistance des messages de la messagerie (fichier ou base de données)

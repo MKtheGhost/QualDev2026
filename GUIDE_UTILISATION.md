@@ -78,7 +78,16 @@ Dans le client programmeur :
    - Exemple : `services.InversionService`
    - Le package doit correspondre au login du programmeur
 
-**Important** : Les classes de service doivent être compilées et dans le classpath du serveur.
+**Fonctionnement du téléchargement :**
+- Le serveur tente de télécharger la classe depuis votre serveur FTP
+- L'URL est construite comme suit : `{votre_ftp_url}/{package}/{classe}.class`
+- Protocoles supportés : HTTP, HTTPS, file://
+- Si le téléchargement échoue, le serveur utilise automatiquement le classpath local (fallback)
+
+**Important** : 
+- Pour utiliser le téléchargement FTP, placez vos fichiers .class compilés sur votre serveur FTP
+- La structure doit respecter les packages (ex: `services/InversionService.class`)
+- Si vous n'avez pas de serveur FTP accessible, le fallback sur classpath local fonctionnera automatiquement
 
 ### 4. Utiliser un service (amateur)
 
@@ -174,18 +183,25 @@ Pour créer un service personnalisé :
 - **Note** : Les données sont perdues au redémarrage du serveur
 
 ### Chargement des services
-- Chargement dynamique via `Class.forName()`
+- **Téléchargement depuis FTP** : Le serveur télécharge automatiquement les classes depuis le serveur FTP du programmeur
+  - Protocoles supportés : HTTP, HTTPS, file://
+  - Structure attendue : `{ftp_url}/{package}/{classe}.class`
+  - Exemple : `http://exemple.com/services/InversionService.class`
+- **Fallback automatique** : Si le téléchargement échoue, utilisation du classpath local
+- **ServiceLoader** : Utilitaire qui gère le téléchargement et le chargement dynamique
 - Vérification que la classe implémente `BRiService`
 - Vérification du package (doit commencer par le login)
+- Validation des noms de services (non null, non vide)
 
 ## Limitations de cette version simplifiée
 
-1. **Téléchargement FTP simulé** : Le service d'analyse XML simule le téléchargement FTP (génère un rapport fictif)
-2. **Envoi d'email simulé** : L'envoi d'email est simulé (affiché dans la console du serveur)
-3. **Pas de persistance** : Données perdues au redémarrage (sauf messages en mémoire pendant l'exécution)
-4. **Pas de gestion .jar** : Seules les classes individuelles sont supportées
-5. **Ressources partagées limitées** : La messagerie utilise une ressource partagée en mémoire (perdue au redémarrage)
-6. **Pas d'authentification amateur** : Tous les amateurs sont anonymes
+1. **Téléchargement FTP réel non supporté** : Seuls HTTP, HTTPS et file:// sont supportés pour le téléchargement des classes. Le protocole FTP réel nécessiterait Apache Commons Net.
+2. **Téléchargement FTP simulé dans AnalyseFichierXMLService** : Le service d'analyse XML simule le téléchargement FTP (génère un rapport fictif)
+3. **Envoi d'email simulé** : L'envoi d'email est simulé (affiché dans la console du serveur)
+4. **Pas de persistance** : Données perdues au redémarrage (sauf messages en mémoire pendant l'exécution)
+5. **Pas de gestion .jar** : Seules les classes individuelles sont supportées
+6. **Ressources partagées limitées** : La messagerie utilise une ressource partagée en mémoire (perdue au redémarrage)
+7. **Pas d'authentification amateur** : Tous les amateurs sont anonymes
 
 ## Comment quitter
 
@@ -219,7 +235,12 @@ Le serveur peut être arrêté de deux façons :
 ### Erreur "Classe non trouvée"
 - Vérifier que la classe est compilée
 - Vérifier que le package est correct
-- Vérifier que la classe est dans le classpath du serveur
+- Si vous utilisez le téléchargement FTP :
+  - Vérifier que l'URL FTP est correcte et accessible
+  - Vérifier que le fichier .class est présent sur le serveur
+  - Vérifier la structure des répertoires (doit correspondre aux packages)
+- Si le téléchargement échoue, le serveur utilisera automatiquement le classpath local
+- Vérifier que la classe est dans le classpath du serveur (pour le fallback)
 
 ### Erreur "Package incorrect"
 - Le package doit commencer par le login du programmeur
@@ -236,8 +257,10 @@ Le serveur peut être arrêté de deux façons :
 ## Prochaines étapes possibles
 
 1. Ajouter la persistance (fichier JSON ou base de données)
-2. Implémenter le téléchargement FTP
+2. Implémenter le support FTP réel complet (avec Apache Commons Net)
 3. Gérer les fichiers .jar
 4. Ajouter l'authentification pour les amateurs
 5. Créer une interface graphique
 6. Ajouter la gestion des ressources partagées
+7. Améliorer la gestion des erreurs de téléchargement
+8. Ajouter un cache pour les classes téléchargées

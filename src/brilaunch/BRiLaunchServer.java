@@ -37,6 +37,7 @@ public class BRiLaunchServer {
         // Ajouter un shutdown hook pour arrêter proprement
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("\nArrêt du serveur en cours...");
+            ServiceLoader.cleanup(); // Nettoyer les fichiers temporaires
             stop();
         }));
         
@@ -217,10 +218,18 @@ public class BRiLaunchServer {
             return;
         }
         
-        // Pour simplifier, on charge la classe depuis le classpath local
-        // (Dans une vraie implémentation, on la téléchargerait depuis le FTP)
+        // Télécharger et charger la classe depuis le serveur FTP du programmeur
         try {
-            Class<?> serviceClass = Class.forName(className);
+            Class<?> serviceClass;
+            try {
+                // Essayer de télécharger depuis le serveur FTP
+                serviceClass = ServiceLoader.loadServiceClass(className, programmer.getFtpUrl());
+            } catch (Exception e) {
+                // Si le téléchargement échoue, essayer de charger depuis le classpath local
+                // (fallback pour compatibilité et tests)
+                System.err.println("Avertissement: Téléchargement FTP échoué, chargement depuis classpath local: " + e.getMessage());
+                serviceClass = Class.forName(className);
+            }
             if (!BRiService.class.isAssignableFrom(serviceClass)) {
                 out.println("ERREUR: La classe doit implémenter BRiService");
                 return;
@@ -228,6 +237,11 @@ public class BRiLaunchServer {
             
             BRiService service = (BRiService) serviceClass.getDeclaredConstructor().newInstance();
             String serviceName = service.getServiceName();
+            
+            if (serviceName == null || serviceName.trim().isEmpty()) {
+                out.println("ERREUR: Le nom du service ne peut pas être vide");
+                return;
+            }
             
             if (services.containsKey(serviceName)) {
                 out.println("ERREUR: Un service avec ce nom existe déjà");
@@ -267,16 +281,43 @@ public class BRiLaunchServer {
         }
         
         try {
-            Class<?> serviceClass = Class.forName(newClassName);
+            Class<?> serviceClass;
+            try {
+                // Essayer de télécharger depuis le serveur FTP
+                serviceClass = ServiceLoader.loadServiceClass(newClassName, programmer.getFtpUrl());
+            } catch (Exception e) {
+                // Si le téléchargement échoue, essayer de charger depuis le classpath local
+                System.err.println("Avertissement: Téléchargement FTP échoué, chargement depuis classpath local: " + e.getMessage());
+                serviceClass = Class.forName(newClassName);
+            }
+            
             if (!BRiService.class.isAssignableFrom(serviceClass)) {
                 out.println("ERREUR: La classe doit implémenter BRiService");
                 return;
             }
             
             BRiService newService = (BRiService) serviceClass.getDeclaredConstructor().newInstance();
-            serviceInfo = new ServiceInfo(serviceName, programmer.getLogin(), newClassName, newService);
-            services.put(serviceName, serviceInfo);
-            out.println("OK: Service '" + serviceName + "' mis à jour avec succès");
+            String newServiceName = newService.getServiceName();
+            
+            if (newServiceName == null || newServiceName.trim().isEmpty()) {
+                out.println("ERREUR: Le nom du service ne peut pas être vide");
+                return;
+            }
+            
+            // Si le nom a changé, vérifier qu'il n'existe pas déjà
+            if (!newServiceName.equals(serviceName) && services.containsKey(newServiceName)) {
+                out.println("ERREUR: Un service avec ce nouveau nom existe déjà");
+                return;
+            }
+            
+            // Si le nom a changé, retirer l'ancien et ajouter le nouveau
+            if (!newServiceName.equals(serviceName)) {
+                services.remove(serviceName);
+            }
+            
+            serviceInfo = new ServiceInfo(newServiceName, programmer.getLogin(), newClassName, newService);
+            services.put(newServiceName, serviceInfo);
+            out.println("OK: Service '" + newServiceName + "' mis à jour avec succès");
             
         } catch (Exception e) {
             out.println("ERREUR: Impossible de mettre à jour le service: " + e.getMessage());
