@@ -140,10 +140,26 @@ Pour créer un service personnalisé :
 - **Fonction** : Inverse une chaîne de caractères
 - **Exemple** : "non ? si !" → "! is ? non"
 
-### ComptageMotsService
+### AnalyseFichierXMLService
 - **Package** : `services`
-- **Nom** : "Comptage de mots"
-- **Fonction** : Compte le nombre de mots dans un texte
+- **Nom** : "Analyse de fichier XML"
+- **Fonction** : Analyse un fichier XML et envoie un rapport par email
+- **Format d'entrée** : `ftp://url_du_fichier|email@destinataire.com` ou `file://chemin/local|email@destinataire.com`
+- **Exemple** : `file://test.xml|user@example.com`
+- **Note** : 
+  - Supporte les fichiers locaux (`file://`) et HTTP/HTTPS
+  - Le téléchargement FTP est simulé (génère un rapport fictif)
+  - L'envoi d'email est simulé (affiché dans la console du serveur)
+
+### MessagerieInterneService
+- **Package** : `services`
+- **Nom** : "Messagerie interne"
+- **Fonction** : Service de messagerie avec ressource partagée
+- **Envoi de message** : `ENVOI:pseudo_destinataire:message`
+  - Exemple : `ENVOI:alice:Bonjour Alice !`
+- **Lecture des messages** : `LECTURE:pseudo_expediteur`
+  - Exemple : `LECTURE:alice`
+- **Note** : Les messages sont stockés dans une ressource partagée statique (persistants en mémoire entre les appels)
 
 ## Architecture technique
 
@@ -164,11 +180,12 @@ Pour créer un service personnalisé :
 
 ## Limitations de cette version simplifiée
 
-1. **Pas de téléchargement FTP** : Les services doivent être dans le classpath local
-2. **Pas de persistance** : Données perdues au redémarrage
-3. **Pas de gestion .jar** : Seules les classes individuelles sont supportées
-4. **Pas de ressources partagées** : Chaque service est indépendant
-5. **Pas d'authentification amateur** : Tous les amateurs sont anonymes
+1. **Téléchargement FTP simulé** : Le service d'analyse XML simule le téléchargement FTP (génère un rapport fictif)
+2. **Envoi d'email simulé** : L'envoi d'email est simulé (affiché dans la console du serveur)
+3. **Pas de persistance** : Données perdues au redémarrage (sauf messages en mémoire pendant l'exécution)
+4. **Pas de gestion .jar** : Seules les classes individuelles sont supportées
+5. **Ressources partagées limitées** : La messagerie utilise une ressource partagée en mémoire (perdue au redémarrage)
+6. **Pas d'authentification amateur** : Tous les amateurs sont anonymes
 
 ## Comment quitter
 

@@ -10,10 +10,12 @@ public class ServerLauncher {
         // Créer quelques comptes programmeurs de test
         server.registerProgrammer("exemple", "password123", "ftp://exemple.com");
         server.registerProgrammer("test", "test123", "ftp://test.com");
+        server.registerProgrammer("services", "services123", "ftp://services.com");
         
         System.out.println("\nComptes programmeurs créés:");
         System.out.println("  - exemple / password123");
         System.out.println("  - test / test123");
+        System.out.println("  - services / services123");
         System.out.println("\nVous pouvez maintenant lancer les clients!");
         
         server.start();
