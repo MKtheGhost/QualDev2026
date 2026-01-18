@@ -86,6 +86,7 @@ java -cp bin brilaunch.ClientProg
 **Comptes de test disponibles :**
 - Login: `exemple` / Password: `password123`
 - Login: `test` / Password: `test123`
+- Login: `services` / Password: `services123`
 
 **Actions disponibles :**
 1. Fournir un nouveau service
@@ -122,13 +123,21 @@ Pour arrêter le serveur proprement :
 
 ## Services d'exemple
 
-Deux services d'exemple sont fournis dans le package `services` :
+Quatre services d'exemple sont fournis dans le package `services` :
 
 1. **InversionService** : Inverse un texte
    - Entrée : "non ? si !"
    - Sortie : "! is ? non"
 
-2. **ComptageMotsService** : Compte le nombre de mots dans un texte
+2. **AnalyseFichierXMLService** : Analyse un fichier XML et envoie un rapport par email
+   - Entrée : `ftp://url_du_fichier|email@destinataire.com` ou `file://chemin/local|email@destinataire.com`
+   - Sortie : Confirmation avec rapport d'analyse
+   - Note : Le téléchargement FTP et l'envoi d'email sont simulés dans cette version
+
+3. **MessagerieInterneService** : Service de messagerie interne avec ressource partagée
+   - Envoi : `ENVOI:pseudo_destinataire:message`
+   - Lecture : `LECTURE:pseudo_expediteur`
+   - Les messages sont stockés dans une ressource partagée (persistants en mémoire)
 
 ## Structure des packages
 
@@ -163,6 +172,18 @@ Deux services d'exemple sont fournis dans le package `services` :
    - Entrer: `non ? si !`
    - Résultat: `! is ? non`
 
+### Exemples avec les nouveaux services
+
+**Service d'analyse XML** :
+- Installer : `services.AnalyseFichierXMLService` (avec compte `services`)
+- Utiliser : `file://test.xml|user@example.com`
+- Résultat : Rapport d'analyse affiché et "envoyé" par email (simulé)
+
+**Service de messagerie** :
+- Installer : `services.MessagerieInterneService` (avec compte `services`)
+- Envoyer un message : `ENVOI:alice:Bonjour !`
+- Lire les messages : `LECTURE:alice`
+
 ## Structure du code
 
 ```
@@ -176,16 +197,17 @@ src/
 │   ├── ServiceInfo.java         # Informations sur un service installé
 │   └── ServerLauncher.java      # Lanceur avec comptes de test
 └── services/
-    ├── InversionService.java    # Service d'exemple : inversion de texte
-    └── ComptageMotsService.java # Service d'exemple : comptage de mots
+    ├── InversionService.java           # Service d'exemple : inversion de texte
+    ├── AnalyseFichierXMLService.java   # Service avec échange de fichiers : analyse XML
+    └── MessagerieInterneService.java   # Service avec ressource partagée : messagerie
 ```
 
 ## Améliorations possibles
 
-- Implémentation du téléchargement depuis FTP
+- Implémentation réelle du téléchargement depuis FTP (actuellement simulé)
+- Implémentation réelle de l'envoi d'email avec JavaMail API (actuellement simulé)
 - Gestion des services .jar
-- Gestion des ressources partagées
-- Services avec échange de fichiers
+- Persistance des messages de la messagerie (fichier ou base de données)
 - Authentification des amateurs pour certains services
 - Persistance des données (programmeurs et services)
 - Interface graphique pour les clients
